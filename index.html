@@ -1,0 +1,2521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<title>🧶 拼豆图图图</title>
+<style>
+:root {
+  --primary: #8B5CF6;
+  --primary-dark: #7C3AED;
+  --primary-light: #A78BFA;
+  --primary-lighter: #EDE9FE;
+  --accent: #EC4899;
+  --accent-dark: #DB2777;
+  --bg-main: #F5F3FF;
+  --bg-panel: #FFFFFF;
+  --bg-hover: #F3E8FF;
+  --bg-input: #FAF5FF;
+  --text-primary: #581C87;
+  --text-secondary: #7C3AED;
+  --text-muted: #8B5CF6;
+  --border-light: #DDD6FE;
+  --border-medium: #C4B5FD;
+  --shadow: rgba(139, 92, 246, 0.12);
+  --shadow-strong: rgba(139, 92, 246, 0.2);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+
+body{
+  background: linear-gradient(135deg, var(--bg-main) 0%, #EDE9FE 50%, #F5F3FF 100%);
+  padding:2rem 1rem;
+  line-height:1.6;
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem
+}
+
+.panel{
+  background: var(--bg-panel);
+  border-radius:24px;
+  padding:1.5rem;
+  box-shadow: 0 4px 20px var(--shadow);
+  border: 1px solid var(--border-light);
+  transition: box-shadow 0.3s ease;
+}
+
+.panel:hover {
+  box-shadow: 0 8px 30px var(--shadow-strong);
+}
+
+.panel-title{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:1.2rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:10px 0;
+  flex-wrap:wrap
+}
+
+.control label{
+  font-weight:600;
+  color: var(--text-secondary);
+  white-space:nowrap;
+  font-size: 14px;
+}
+
+input[type="file"]{
+  padding:10px;
+  border:2px dashed var(--border-medium);
+  border-radius:16px;
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+input[type="file"]:hover{
+  border-color: var(--primary);
+  background: var(--bg-hover);
+}
+
+input[type="range"]{
+  -webkit-appearance: none;
+  width: 140px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--primary-lighter), var(--primary-light));
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow-strong);
+  border: 2px solid #fff;
+  transition: transform 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover{
+  transform: scale(1.15);
+}
+
+input[type="number"], select{
+  padding:10px 14px;
+  border:2px solid var(--border-light);
+  border-radius:14px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+input[type="number"]:focus, select:focus{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-lighter);
+}
+
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:16px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+button:hover::before {
+  left: 100%;
+}
+
+button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow-strong);
+}
+
+button:active{
+  transform: translateY(0);
+}
+
+button.blue{
+  background: linear-gradient(135deg, #10B981, #059669);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25);
+}
+
+button.blue:hover{
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+}
+
+button.gray{
+  background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+  color: var(--text-secondary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+button.gray:hover{
+  background: linear-gradient(135deg, #E5E7EB, #D1D5DB);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+button.small{
+  padding:8px 14px;
+  font-size:13px;
+  border-radius:12px;
+}
+
+.canvas-wrapper{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  margin-top: 1.5rem;
+}
+
+.canvas-wrapper > div:first-child,
+.canvas-wrapper > div:nth-child(3) {
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+canvas{
+  border-radius:20px;
+  border:3px solid var(--border-light);
+  image-rendering:pixelated;
+  box-shadow: 0 8px 32px var(--shadow);
+  transition: transform 0.3s ease;
+}
+
+canvas:hover{
+  transform: scale(1.01);
+}
+
+.canvas-btns{
+  display:flex;
+  gap:12px;
+  margin:12px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.color-stats{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:flex-start;
+  margin-top:16px;
+  padding: 12px;
+  background: var(--bg-input);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+}
+
+.color-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  padding: 8px;
+  background: var(--bg-panel);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: transform 0.2s ease;
+}
+
+.color-item:hover{
+  transform: translateY(-2px);
+}
+
+.color-block{
+  width:28px;
+  height:28px;
+  border-radius:8px;
+  border:2px solid var(--border-light);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.color-count{
+  font-size:12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.pattern-grid {
+  display: inline-grid;
+  border-top: 2px solid #222;
+  border-left: 2px solid #222;
+  background: #fff;
+  max-width: 100%;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.pattern-cell {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.pattern-cell.right-bold { border-right: 2px solid #222; }
+.pattern-cell.bottom-bold { border-bottom: 2px solid #222; }
+
+.pattern-top-nums {
+  display: grid;
+  grid-auto-flow: column;
+  padding-left: 22px;
+}
+
+.pattern-top-num {
+  width: 22px;
+  height: 20px;
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pattern-wrapper {
+  display: flex;
+}
+
+.pattern-left-nums {
+  display: grid;
+  grid-auto-rows: 22px;
+}
+
+.pattern-left-num {
+  height: 22px;
+  width: 22px;
+  font-size: 10px;
+  font-weight: bold;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#beanPatternFullExport {
+  background: var(--bg-panel);
+  padding: 16px 20px;
+  border-radius: 16px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 20px var(--shadow);
+}
+
+#beanPatternColorInfo {
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-medium);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+#beanPatternContainer {
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: auto;
+  padding: 8px;
+}
+
+#historyList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.history-item {
+  display: flex;
+  flex-direction:column;
+  align-items:center;
+  background: var(--bg-input);
+  border-radius:16px;
+  padding:14px;
+  gap:8px;
+  border: 1px solid var(--border-light);
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--shadow-strong);
+}
+
+.history-canvas {
+  width:100px;
+  height:100px;
+  border-radius:12px;
+  border:2px solid var(--border-light);
+  image-rendering:pixelated;
+  background: #fff;
+}
+
+.history-name {
+  font-size:14px;
+  text-align:center;
+  font-weight:600;
+  max-width:100px;
+  color: var(--text-primary);
+}
+
+.history-btns {
+  display:flex;
+  gap:6px;
+}
+
+.history-btns button {
+  font-size:12px;
+  padding:6px 12px;
+  border-radius: 10px;
+}
+
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+  background: var(--bg-input);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+}
+
+.tab{
+  padding:10px 18px;
+  border-radius:12px;
+  background: transparent;
+  cursor:pointer;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.tab:hover{
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.tab.active{
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color:#fff;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.tab-panel{
+  display:none;
+  animation: fadeIn 0.3s ease;
+}
+
+.tab-panel.active{
+  display:block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#editMask{
+  position:fixed;
+  inset:0;
+  background:rgba(88, 28, 135, 0.6);
+  backdrop-filter: blur(4px);
+  z-index:90;
+  display:none;
+}
+
+#editPopup{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background: var(--bg-panel);
+  border-radius:24px;
+  z-index:91;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:1.2rem;
+  max-width:95vw;
+  max-height:90vh;
+  overflow:auto;
+  padding: 60px 24px 24px;
+  box-shadow: 0 24px 80px rgba(88, 28, 135, 0.3);
+  border: 2px solid var(--border-light);
+}
+
+#editColorPanel{
+  width:100%;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  padding: 12px;
+  min-height: 50px;
+  background: var(--bg-input);
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+}
+
+#commonColorsPanel {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-top: 1px solid var(--border-light);
+  margin-top: 8px;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--bg-input);
+  border-radius: 16px;
+}
+
+.common-color {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 3px solid transparent;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+
+.common-color:hover {
+  transform: scale(1.1);
+}
+
+.common-color.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-lighter), 0 4px 12px var(--shadow);
+}
+
+#editCanvas{
+  border:3px solid var(--primary);
+  border-radius: 16px;
+  cursor:pointer;
+  flex-shrink: 0;
+  box-shadow: 0 8px 32px var(--shadow);
+}
+
+.edit-btns{
+  display:flex;
+  gap:12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#editClose{
+  position:absolute;
+  top:16px;
+  right:16px;
+  width:36px;
+  height:36px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color:#fff;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+  z-index:999;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+  transition: all 0.3s ease;
+}
+
+#editClose:hover {
+  transform: rotate(90deg) scale(1.1);
+}
+
+.custom-size{
+  display:none;
+}
+
+.synth-panel {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6D28D9 100%);
+  color: white;
+  border-radius: 20px;
+  padding: 1.2rem;
+  margin: 0.8rem 0;
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.synth-panel h3 {
+  margin-bottom: 0.8rem;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.synth-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  flex-wrap: wrap;
+}
+
+.synth-control label {
+  color: #E9D5FF;
+  font-size: 13px;
+  min-width: 80px;
+  font-weight: 600;
+}
+
+.synth-control select, .synth-control input {
+  background: rgba(255,255,255,0.95);
+  border: none;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.pattern-color-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 0;
+}
+
+.pattern-color-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid rgba(0,0,0,0.08);
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.pattern-color-cell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem 0.5rem;
+  }
+
+  .panel {
+    padding: 1rem;
+    border-radius: 20px;
+  }
+
+  .control {
+    gap: 6px;
+  }
+
+  button {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .pattern-color-cell {
+    min-width: 60px;
+    height: 28px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-input);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+}
+
+.progress-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(88, 28, 135, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.progress-overlay.active {
+  display: flex;
+}
+
+.progress-box {
+  background: var(--bg-panel);
+  padding: 40px 48px;
+  border-radius: 24px;
+  box-shadow: 0 24px 80px rgba(88, 28, 135, 0.4);
+  border: 2px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  min-width: 320px;
+}
+
+.progress-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 12px;
+  background: var(--bg-input);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-light), var(--primary), var(--primary-dark));
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  width: 0%;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.progress-detail {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.pattern-color-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
+  padding: 16px 0;
+}
+
+.pattern-color-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 36px;
+  padding: 4px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid rgba(0,0,0,0.06);
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+  flex-grow: 0;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.pattern-color-cell:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 1;
+}
+
+.pattern-color-cell .cell-code {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pattern-color-cell .cell-count {
+  font-size: 11px;
+  opacity: 0.9;
+  font-weight: 600;
+}
+
+.footer {
+text-align: center;
+padding: 1rem;
+font-size: 0.9rem;
+color: var(--text-light);
+background: var(--surface);
+border-top: 1px solid var(--border);
+}
+
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<div id="progressOverlay" class="progress-overlay">
+  <div class="progress-box">
+    <div class="progress-title">🎨 正在生成像素画...</div>
+    <div class="progress-bar-bg">
+      <div id="progressBarFill" class="progress-bar-fill"></div>
+    </div>
+    <div id="progressText" class="progress-text">0%</div>
+    <div id="progressDetail" class="progress-detail">准备中...</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="panel">
+    <h1 class="panel-title">🎨 像素画生成器</h1>
+    <div class="control">
+      <input type="file" id="uploadImg" accept="image/*">
+    </div>
+
+    <div class="control">
+      <label>画布尺寸</label>
+      <select id="sizeMode">
+        <option value="416" selected>52×52</option>
+        <option value="576">72×72</option>
+        <option value="832">104×104</option>
+        <option value="auto">自动原图</option>
+        <option value="custom">自定义</option>
+      </select>
+      <div class="control custom-size" id="customSizeWrap">
+        <input type="number" id="cw" placeholder="宽" style="width:80px" min="64" max="2000" value="600">
+        <input type="number" id="ch" placeholder="高" style="width:80px" min="64" max="2000" value="600">
+      </div>
+    </div>
+
+    <div class="synth-panel">
+      <h3>🎨 色块合成方案</h3>
+      <div class="synth-control">
+        <label>合成方案</label>
+        <select id="synthMode">
+          <option value="traditional" selected>传统方案（原算法）</option>
+          <option value="smart">智能方案（Lab+K-Means+抖动）</option>
+          <option value="gridMajority">网格主色方案（比重最高→MARD）</option>
+        </select>
+      </div>
+      <div class="synth-control" id="smartOptions" style="display:none;">
+        <label>色彩空间</label>
+        <select id="colorSpace">
+          <option value="lab" selected>CIE Lab</option>
+          <option value="rgb">RGB</option>
+          <option value="hsv">HSV</option>
+        </select>
+        <label>抖动</label>
+        <select id="ditherType">
+          <option value="none">无</option>
+          <option value="floyd" selected>Floyd-Steinberg</option>
+          <option value="bayer">Bayer</option>
+        </select>
+      </div>
+      <div class="synth-control" id="edgeControl" style="display:none;">
+        <label>边缘增强</label>
+        <input type="range" id="edgeEnhance" min="0" max="100" value="20" style="width:100px">
+        <span id="edgeVal" style="color:#fff;min-width:30px">20%</span>
+      </div>
+    </div>
+
+    <div class="control">
+      <label>颜色数</label>
+      <select id="maxColors">
+        <option value="0">不限制</option>
+        <option value="4">4</option>
+        <option value="8">8</option>
+        <option value="16" selected>16</option>
+        <option value="32">32</option>
+      </select>
+      <label>颜色阈值</label>
+      <input type="range" id="threshold" min="5" max="80" value="30">
+      <span id="thresholdVal">30</span>
+      <button id="genBtn">生成像素画</button>
+    </div>
+
+    <div class="control">
+      <button id="exportProjectBtn" class="blue">💾 导出项目文件</button>
+      <button id="importProjectBtn" class="gray">📂 导入项目文件</button>
+      <input type="file" id="importFile" accept=".json" style="display:none;">
+    </div>
+
+    <div class="canvas-wrapper" style="margin-top:1rem">
+      <div>原图</div>
+      <canvas id="originCanvas"></canvas>
+      <div>像素画</div>
+      <canvas id="pixelCanvas"></canvas>
+      <div class="canvas-btns">
+        <button class="blue" id="savePixelBtn">💾 保存像素画</button>
+        <button class="blue" id="editBtn">编辑像素</button>
+        <button class="gray" id="saveToLib">保存到素材库</button>
+      </div>
+    </div>
+    <div id="colorList" class="color-stats"></div>
+  </div>
+
+  <div class="panel">
+    <h1 class="panel-title">🎨📄 色卡及图纸</h1>
+    <div class="tabs">
+      <div class="tab active" data-target="beanColorCard">拼豆色卡</div>
+      <div class="tab" data-target="beanPattern">拼豆图纸</div>
+    </div>
+
+    <div id="beanColorCard" class="tab-panel active">
+      <h3 class="panel-title">🎨 MARD 标准字母色卡</h3>
+      <div id="beanColorCardList" class="color-stats"></div>
+    </div>
+
+    <div id="beanPattern" class="tab-panel active">
+      <h3 class="panel-title">📄 拼豆图纸（MARD色号标注）</h3>
+      <div id="beanPatternFullExport">
+        <div id="beanPatternContainer"></div>
+        <div id="beanPatternColorInfo"></div>
+      </div>
+      <div class="control" style="margin-top:20px; display:flex; gap:12px;">
+        <button id="saveOriginalBtn" class="blue">💾 保存【原版图纸】</button>
+        <button id="saveMirrorBtn" class="blue">💾 保存【镜像图纸】</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="panel-title">🗂 素材库</h3>
+    <div id="historyList"></div>
+  </div>
+</div>
+
+<div class="footer">
+    © 2026 拼豆图图图 | 作者：leaf-knitter
+</div>
+
+<div id="editMask"></div>
+<div id="editPopup">
+  <div id="editClose">×</div>
+  <div id="editColorPanel"></div>
+  <div id="commonColorsPanel"></div>
+  <canvas id="editCanvas"></canvas>
+  <div class="edit-btns">
+    <button class="gray" id="undoBtn">撤销</button>
+    <button class="gray" id="pickColorBtn">拾取颜色</button>
+    <button class="gray" id="confirmPickBtn">确定拾取</button>
+    <button class="gray" id="editCancel">取消</button>
+    <button class="blue" id="editConfirm">确认修改</button>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+function rgbToKey(r,g,b){return `${r},${g},${b}`}
+function keyToRgb(k){return k.split(',').map(Number)}
+function hexToRgb(hex) {
+  hex = hex.replace('#', '').toUpperCase();
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return [r, g, b];
+}
+function rgbToHex(r,g,b){
+  return "#" + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase();
+}
+
+function rgbToLab(r, g, b) {
+  let [x, y, z] = [r / 255, g / 255, b / 255];
+  x = x > 0.04045 ? Math.pow((x + 0.055) / 1.055, 2.4) : x / 12.92;
+  y = y > 0.04045 ? Math.pow((y + 0.055) / 1.055, 2.4) : y / 12.92;
+  z = z > 0.04045 ? Math.pow((z + 0.055) / 1.055, 2.4) : z / 12.92;
+  x = x * 95.047; y = y * 100.000; z = z * 108.883;
+  x /= 95.047; y /= 100.000; z /= 108.883;
+  x = x > 0.008856 ? Math.cbrt(x) : (7.787 * x) + 16 / 116;
+  y = y > 0.008856 ? Math.cbrt(y) : (7.787 * y) + 16 / 116;
+  z = z > 0.008856 ? Math.cbrt(z) : (7.787 * z) + 16 / 116;
+  const l = (116 * y) - 16;
+  const a = 500 * (x - y);
+  const b_ = 200 * (y - z);
+  return [l, a, b_];
+}
+
+function colorDist(a, b) {
+  const lab1 = rgbToLab(...a);
+  const lab2 = rgbToLab(...b);
+  const dl = lab1[0] - lab2[0];
+  const da = lab1[1] - lab2[1];
+  const db = lab1[2] - lab2[2];
+  return Math.sqrt(dl * dl + da * da + db * db);
+}
+
+function labToRgb(l, a, b) {
+  let y = (l + 16) / 116;
+  let x = a / 500 + y;
+  let z = y - b / 200;
+  x = x > 0.2068966 ? x * x * x : (x - 16/116) / 7.787;
+  y = y > 0.2068966 ? y * y * y : (y - 16/116) / 7.787;
+  z = z > 0.2068966 ? z * z * z : (z - 16/116) / 7.787;
+  x *= 95.047; y *= 100.0; z *= 108.883;
+  x /= 100; y /= 100; z /= 100;
+  let r = x * 3.2406 + y * -1.5372 + z * -0.4986;
+  let g = x * -0.9689 + y * 1.8758 + z * 0.0415;
+  let bval = x * 0.0557 + y * -0.2040 + z * 1.0570;
+  r = r > 0.0031308 ? 1.055 * Math.pow(r, 1/2.4) - 0.055 : 12.92 * r;
+  g = g > 0.0031308 ? 1.055 * Math.pow(g, 1/2.4) - 0.055 : 12.92 * g;
+  bval = bval > 0.0031308 ? 1.055 * Math.pow(bval, 1/2.4) - 0.055 : 12.92 * bval;
+  return [
+    Math.max(0, Math.min(255, Math.round(r * 255))),
+    Math.max(0, Math.min(255, Math.round(g * 255))),
+    Math.max(0, Math.min(255, Math.round(bval * 255)))
+  ];
+}
+
+function rgbToHsv(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const d = max - min;
+  let h = 0;
+  const s = max === 0 ? 0 : d / max;
+  const v = max;
+  if (max !== min) {
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+  return [h * 360, s * 100, v * 255];
+}
+
+function hsvToRgb(h, s, v) {
+  h /= 360; s /= 100; v /= 255;
+  const i = Math.floor(h * 6);
+  const f = h * 6 - i;
+  const p = v * (1 - s);
+  const q = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
+  let r, g, b;
+  switch (i % 6) {
+    case 0: r = v; g = t; b = p; break;
+    case 1: r = q; g = v; b = p; break;
+    case 2: r = p; g = v; b = t; break;
+    case 3: r = p; g = q; b = v; break;
+    case 4: r = t; g = p; b = v; break;
+    case 5: r = v; g = p; b = q; break;
+  }
+  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+}
+
+function colorSpaceDistance(c1, c2, colorSpace) {
+  if (colorSpace === 'lab') {
+    return Math.sqrt(
+      Math.pow(c1[0] - c2[0], 2) +
+      Math.pow(c1[1] - c2[1], 2) +
+      Math.pow(c1[2] - c2[2], 2)
+    );
+  } else if (colorSpace === 'hsv') {
+    const dh = Math.min(Math.abs(c1[0] - c2[0]), 360 - Math.abs(c1[0] - c2[0])) / 180;
+    const ds = Math.abs(c1[1] - c2[1]) / 100;
+    const dv = Math.abs(c1[2] - c2[2]) / 255;
+    return Math.sqrt(dh * dh * 4 + ds * ds + dv * dv);
+  } else {
+    return Math.sqrt(
+      Math.pow(c1[0] - c2[0], 2) +
+      Math.pow(c1[1] - c2[1], 2) +
+      Math.pow(c1[2] - c2[2], 2)
+    );
+  }
+}
+
+function kMeans(pixels, k, colorSpace) {
+  let centroids = [];
+  const used = new Set();
+  let idx = Math.floor(Math.random() * pixels.length);
+  centroids.push([...pixels[idx]]);
+  used.add(idx);
+
+  while (centroids.length < k) {
+    let maxDist = -1;
+    let farthestIdx = 0;
+    for (let i = 0; i < pixels.length; i++) {
+      if (used.has(i)) continue;
+      let minDist = Infinity;
+      for (const c of centroids) {
+        const d = colorSpaceDistance(pixels[i], c, colorSpace);
+        if (d < minDist) minDist = d;
+      }
+      if (minDist > maxDist) {
+        maxDist = minDist;
+        farthestIdx = i;
+      }
+    }
+    centroids.push([...pixels[farthestIdx]]);
+    used.add(farthestIdx);
+  }
+
+  const maxIterations = 30;
+  for (let iter = 0; iter < maxIterations; iter++) {
+    const clusters = Array(k).fill(null).map(() => []);
+    for (const pixel of pixels) {
+      let minDist = Infinity;
+      let closest = 0;
+      for (let i = 0; i < k; i++) {
+        const dist = colorSpaceDistance(pixel, centroids[i], colorSpace);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = i;
+        }
+      }
+      clusters[closest].push(pixel);
+    }
+
+    let changed = false;
+    for (let i = 0; i < k; i++) {
+      if (clusters[i].length === 0) continue;
+      const newCentroid = [0, 0, 0];
+      for (const pixel of clusters[i]) {
+        newCentroid[0] += pixel[0];
+        newCentroid[1] += pixel[1];
+        newCentroid[2] += pixel[2];
+      }
+      newCentroid[0] /= clusters[i].length;
+      newCentroid[1] /= clusters[i].length;
+      newCentroid[2] /= clusters[i].length;
+
+      if (colorSpaceDistance(centroids[i], newCentroid, colorSpace) > 0.1) {
+        changed = true;
+      }
+      centroids[i] = newCentroid;
+    }
+    if (!changed) break;
+  }
+
+  return centroids.map(c => {
+    if (colorSpace === 'lab') return labToRgb(c[0], c[1], c[2]);
+    if (colorSpace === 'hsv') return hsvToRgb(c[0], c[1], c[2]);
+    return [Math.round(c[0]), Math.round(c[1]), Math.round(c[2])];
+  });
+}
+
+function findClosestPaletteColor(r, g, b, palette, colorSpace) {
+  let input;
+  if (colorSpace === 'lab') input = rgbToLab(r, g, b);
+  else if (colorSpace === 'hsv') input = rgbToHsv(r, g, b);
+  else input = [r, g, b];
+
+  let minDist = Infinity;
+  let closest = palette[0];
+  for (const color of palette) {
+    let pal;
+    if (colorSpace === 'lab') pal = rgbToLab(color[0], color[1], color[2]);
+    else if (colorSpace === 'hsv') pal = rgbToHsv(color[0], color[1], color[2]);
+    else pal = color;
+
+    const dist = colorSpaceDistance(input, pal, colorSpace);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = color;
+    }
+  }
+  return closest;
+}
+
+function applyFloydSteinberg(data, width, height, palette, colorSpace, smoothness) {
+  const output = new Uint8ClampedArray(data.length);
+  const errors = new Float32Array(width * height * 3);
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      const errIdx = (y * width + x) * 3;
+
+      const factor = 1 - smoothness * 0.5;
+      let r = Math.min(255, Math.max(0, data[idx] + errors[errIdx] * factor));
+      let g = Math.min(255, Math.max(0, data[idx + 1] + errors[errIdx + 1] * factor));
+      let b = Math.min(255, Math.max(0, data[idx + 2] + errors[errIdx + 2] * factor));
+
+      const newColor = findClosestPaletteColor(r, g, b, palette, colorSpace);
+
+      output[idx] = newColor[0];
+      output[idx + 1] = newColor[1];
+      output[idx + 2] = newColor[2];
+      output[idx + 3] = 255;
+
+      const er = r - newColor[0];
+      const eg = g - newColor[1];
+      const eb = b - newColor[2];
+
+      const diffuse = (dx, dy, factor) => {
+        const nx = x + dx, ny = y + dy;
+        if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+          const i = (ny * width + nx) * 3;
+          errors[i] += er * factor;
+          errors[i + 1] += eg * factor;
+          errors[i + 2] += eb * factor;
+        }
+      };
+
+      diffuse(1, 0, 7/16);
+      diffuse(-1, 1, 3/16);
+      diffuse(0, 1, 5/16);
+      diffuse(1, 1, 1/16);
+    }
+  }
+
+  return output;
+}
+
+function applyBayerDither(data, width, height, palette, colorSpace) {
+  const output = new Uint8ClampedArray(data.length);
+  const bayerMatrix = [
+    [0, 8, 2, 10],
+    [12, 4, 14, 6],
+    [3, 11, 1, 9],
+    [15, 7, 13, 5]
+  ];
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      const threshold = (bayerMatrix[y % 4][x % 4] / 16 - 0.5) * 30;
+
+      let r = Math.min(255, Math.max(0, data[idx] + threshold));
+      let g = Math.min(255, Math.max(0, data[idx + 1] + threshold));
+      let b = Math.min(255, Math.max(0, data[idx + 2] + threshold));
+
+      const newColor = findClosestPaletteColor(r, g, b, palette, colorSpace);
+
+      output[idx] = newColor[0];
+      output[idx + 1] = newColor[1];
+      output[idx + 2] = newColor[2];
+      output[idx + 3] = 255;
+    }
+  }
+
+  return output;
+}
+
+function enhanceEdges(data, width, height, strength) {
+  const tempData = new Uint8ClampedArray(data);
+  const kernel = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+
+  for (let y = 1; y < height - 1; y++) {
+    for (let x = 1; x < width - 1; x++) {
+      for (let c = 0; c < 3; c++) {
+        let sum = 0;
+        for (let ky = -1; ky <= 1; ky++) {
+          for (let kx = -1; kx <= 1; kx++) {
+            const idx = ((y + ky) * width + (x + kx)) * 4 + c;
+            sum += tempData[idx] * kernel[(ky + 1) * 3 + (kx + 1)];
+          }
+        }
+        const idx = (y * width + x) * 4 + c;
+        data[idx] = Math.min(255, Math.max(0, data[idx] + (sum - data[idx]) * strength));
+      }
+    }
+  }
+}
+
+const MARD221 = [
+{"name":"T00","color":"#FFFFFF","title":"透明色"},
+{"name":"A1","color":"#FAF5CD","title":"浅米黄"},{"name":"A2","color":"#FCFED6","title":"极浅黄"},{"name":"A3","color":"#FCFF92","title":"柠檬黄"},{"name":"A4","color":"#F7EC5C","title":"亮黄"},{"name":"A5","color":"#F0D83A","title":"金黄"},{"name":"A6","color":"#FDA951","title":"浅橙"},{"name":"A7","color":"#FA8C4F","title":"橙黄"},{"name":"A8","color":"#FBDA4D","title":"鲜黄"},{"name":"A9","color":"#F79D5F","title":"杏橙"},{"name":"A10","color":"#F47E38","title":"深橙"},{"name":"A11","color":"#FEDB99","title":"奶油黄"},{"name":"A12","color":"#FDA276","title":"桃橙"},{"name":"A13","color":"#FEC667","title":"浅金黄"},{"name":"A14","color":"#F75842","title":"橙红"},{"name":"A15","color":"#FBF65E","title":"嫩黄"},{"name":"A16","color":"#FEFF97","title":"鹅黄"},{"name":"A17","color":"#FDE173","title":"玉米黄"},{"name":"A18","color":"#FCBF80","title":"浅杏"},{"name":"A19","color":"#FD7E77","title":"珊瑚橙"},{"name":"A20","color":"#F9D666","title":"土黄"},{"name":"A21","color":"#FAE393","title":"米黄"},{"name":"A22","color":"#EDF878","title":"黄绿"},{"name":"A23","color":"#E4C8BA","title":"浅肤色"},{"name":"A24","color":"#F3F6A9","title":"浅黄绿"},{"name":"A25","color":"#FDF785","title":"淡黄"},{"name":"A26","color":"#FFC734","title":"深金黄"},
+{"name":"B1","color":"#DFF13B","title":"黄绿"},{"name":"B2","color":"#64F343","title":"亮绿"},{"name":"B3","color":"#A1F586","title":"浅绿"},{"name":"B4","color":"#5FDF34","title":"鲜绿"},{"name":"B5","color":"#39E158","title":"草绿"},{"name":"B6","color":"#64E0A4","title":"薄荷绿"},{"name":"B7","color":"#3EAE7C","title":"深薄荷"},{"name":"B8","color":"#1D9B54","title":"深绿"},{"name":"B9","color":"#2A5037","title":"墨绿"},{"name":"B10","color":"#9AD1BA","title":"浅蓝绿"},{"name":"B11","color":"#627032","title":"橄榄绿"},{"name":"B12","color":"#1A6E3D","title":"森林绿"},{"name":"B13","color":"#C8E87D","title":"淡黄绿"},{"name":"B14","color":"#ABE84F","title":"苹果绿"},{"name":"B15","color":"#305335","title":"深墨绿"},{"name":"B16","color":"#C0ED9C","title":"嫩草绿"},{"name":"B17","color":"#9EB33E","title":"橄榄黄"},{"name":"B18","color":"#E6ED4F","title":"亮黄绿"},{"name":"B19","color":"#26B78E","title":"松石绿"},{"name":"B20","color":"#CBECCF","title":"极浅绿"},{"name":"B21","color":"#18616A","title":"深青"},{"name":"B22","color":"#0A4241","title":"墨青"},{"name":"B23","color":"#343B1A","title":"深橄榄"},{"name":"B24","color":"#E8FAA6","title":"浅黄绿"},{"name":"B25","color":"#4E846D","title":"灰绿"},{"name":"B26","color":"#907C35","title":"橄榄棕"},{"name":"B27","color":"#D0E0AF","title":"灰黄绿"},{"name":"B28","color":"#9EE5BB","title":"浅薄荷"},{"name":"B29","color":"#C6DF5F","title":"黄绿"},{"name":"B30","color":"#E3FBB1","title":"极浅黄绿"},{"name":"B31","color":"#B4E691","title":"淡绿"},{"name":"B32","color":"#92AD60","title":"橄榄灰"},
+{"name":"C1","color":"#F0FEE4","title":"极浅蓝绿"},{"name":"C2","color":"#ABF8FE","title":"浅天蓝"},{"name":"C3","color":"#A2E0F7","title":"淡天蓝"},{"name":"C4","color":"#44CDFB","title":"天蓝"},{"name":"C5","color":"#06AADF","title":"深天蓝"},{"name":"C6","color":"#54A7E9","title":"浅蓝"},{"name":"C7","color":"#3977CA","title":"藏青蓝"},{"name":"C8","color":"#0F52BD","title":"深蓝"},{"name":"C9","color":"#3349C3","title":"宝蓝"},{"name":"C10","color":"#3CBCE3","title":"青蓝"},{"name":"C11","color":"#2ADED3","title":"青色"},{"name":"C12","color":"#1E334E","title":"藏青"},{"name":"C13","color":"#CDE7FE","title":"极浅蓝"},{"name":"C14","color":"#D5FCF7","title":"浅青"},{"name":"C15","color":"#21C5C4","title":"深青"},{"name":"C16","color":"#1858A2","title":"海军蓝"},{"name":"C17","color":"#02D1F3","title":"亮青"},{"name":"C18","color":"#213244","title":"深海军蓝"},{"name":"C19","color":"#18869D","title":"蓝绿"},{"name":"C20","color":"#1A70A9","title":"钢蓝"},{"name":"C21","color":"#BCDDFC","title":"淡蓝"},{"name":"C22","color":"#6BB1BB","title":"灰蓝"},{"name":"C23","color":"#C8E2FD","title":"浅蓝"},{"name":"C24","color":"#7EC5F9","title":"天蓝色"},{"name":"C25","color":"#A9E8E0","title":"浅青蓝"},{"name":"C26","color":"#42ADCF","title":"中蓝"},{"name":"C27","color":"#D0DEF9","title":"极浅蓝"},{"name":"C28","color":"#BDCEE8","title":"灰蓝"},{"name":"C29","color":"#364A89","title":"靛蓝"},{"name":"D1","color":"#ACB7EF","title":"浅紫蓝"},{"name":"D2","color":"#868DD3","title":"紫蓝"},{"name":"D3","color":"#3554AF","title":"深紫蓝"},{"name":"D4","color":"#162D7B","title":"藏蓝紫"},{"name":"D5","color":"#B34EC6","title":"紫色"},{"name":"D6","color":"#B37BDC","title":"浅紫"},{"name":"D7","color":"#8758A9","title":"深紫"},{"name":"D8","color":"#E3D2FE","title":"极浅紫"},{"name":"D9","color":"#D5B9F4","title":"淡紫"},{"name":"D10","color":"#301A49","title":"深紫黑"},{"name":"D11","color":"#BEB9E2","title":"灰紫"},{"name":"D12","color":"#DC99CE","title":"粉紫"},{"name":"D13","color":"#B5038D","title":"深玫紫"},{"name":"D14","color":"#862993","title":"暗紫"},{"name":"D15","color":"#2F1F8C","title":"靛紫"},{"name":"D16","color":"#E2E4F0","title":"极浅灰紫"},{"name":"D17","color":"#C7D3F9","title":"浅蓝紫"},{"name":"D18","color":"#9A64B8","title":"中紫"},{"name":"D19","color":"#D8C2D9","title":"灰粉紫"},{"name":"D20","color":"#9A35AD","title":"深紫"},{"name":"D21","color":"#940595","title":"暗紫"},{"name":"D22","color":"#38389A","title":"蓝紫"},{"name":"D23","color":"#EADBF8","title":"极浅紫"},{"name":"D24","color":"#768AE1","title":"蓝紫"},{"name":"D25","color":"#4950C2","title":"深紫蓝"},{"name":"D26","color":"#D6C6EB","title":"淡紫"},
+{"name":"E1","color":"#F6D4CB","title":"浅肤"},{"name":"E2","color":"#FCC1DD","title":"浅粉"},{"name":"E3","color":"#F6BDE8","title":"淡玫粉"},{"name":"E4","color":"#E8649E","title":"玫粉"},{"name":"E5","color":"#F0569F","title":"亮玫红"},{"name":"E6","color":"#EB4172","title":"玫红"},{"name":"E7","color":"#C53674","title":"深玫红"},{"name":"E8","color":"#FDDBE9","title":"极浅粉"},{"name":"E9","color":"#E376C7","title":"紫粉"},{"name":"E10","color":"#D13B95","title":"深紫粉"},{"name":"E11","color":"#F7DAD4","title":"浅肤"},{"name":"E12","color":"#F693BF","title":"桃粉"},{"name":"E13","color":"#B5026A","title":"深桃粉"},{"name":"E14","color":"#FAD4BF","title":"浅橘粉"},{"name":"E15","color":"#F5C9CA","title":"浅粉红"},{"name":"E16","color":"#FBF4EC","title":"极浅肤"},{"name":"E17","color":"#F7E3EC","title":"极浅粉"},{"name":"E18","color":"#F9C8DB","title":"柔粉"},{"name":"E19","color":"#F6BBD1","title":"中粉"},{"name":"E20","color":"#D7C6CE","title":"灰粉"},{"name":"E21","color":"#C09DA4","title":"深灰粉"},{"name":"E22","color":"#B38C9F","title":"暗灰粉"},{"name":"E23","color":"#937D8A","title":"深灰粉"},{"name":"E24","color":"#DEBEE5","title":"淡紫粉"},
+{"name":"F1","color":"#FE9381","title":"橘粉"},{"name":"F2","color":"#F63D4B","title":"红色"},{"name":"F3","color":"#EE4E3E","title":"橙红"},{"name":"F4","color":"#FB2A40","title":"亮红"},{"name":"F5","color":"#E10328","title":"深红"},{"name":"F6","color":"#913635","title":"暗红"},{"name":"F7","color":"#911932","title":"酒红"},{"name":"F8","color":"#BB0126","title":"大红"},{"name":"F9","color":"#E0677A","title":"玫粉"},{"name":"F10","color":"#874628","title":"咖啡"},{"name":"F11","color":"#592323","title":"深棕红"},{"name":"F12","color":"#F3536B","title":"水红"},{"name":"F13","color":"#F45C45","title":"橘红"},{"name":"F14","color":"#FCADB2","title":"浅肉粉"},{"name":"F15","color":"#D50527","title":"正红"},{"name":"F16","color":"#F8C0A9","title":"浅肤"},{"name":"F17","color":"#E89B7D","title":"浅橘"},{"name":"F18","color":"#D07F4A","title":"土黄"},{"name":"F19","color":"#BE454A","title":"砖红"},{"name":"F20","color":"#C69495","title":"灰红"},{"name":"F21","color":"#F2B8C6","title":"浅粉"},{"name":"F22","color":"#F7C3D0","title":"柔粉"},{"name":"F23","color":"#ED806C","title":"橘粉"},{"name":"F24","color":"#E09DAF","title":"灰玫粉"},{"name":"F25","color":"#E84854","title":"鲜红"},
+{"name":"G1","color":"#FFE4D3","title":"浅肤"},{"name":"G2","color":"#FCC6AC","title":"浅橘"},{"name":"G3","color":"#F1C4A5","title":"浅咖"},{"name":"G4","color":"#DCB387","title":"土黄棕"},{"name":"G5","color":"#E7B34E","title":"金棕"},{"name":"G6","color":"#E3A014","title":"深金棕"},{"name":"G7","color":"#985C3A","title":"棕色"},{"name":"G8","color":"#713D2F","title":"深棕"},{"name":"G9","color":"#E4B685","title":"浅棕"},{"name":"G10","color":"#DA8C42","title":"橙棕"},{"name":"G11","color":"#DAC898","title":"浅黄棕"},{"name":"G12","color":"#FEC993","title":"浅杏"},{"name":"G13","color":"#B2714B","title":"深咖"},{"name":"G14","color":"#8B684C","title":"灰咖"},{"name":"G15","color":"#F6F8E3","title":"浅青白"},{"name":"G16","color":"#F2D8C1","title":"浅棕"},{"name":"G17","color":"#77544E","title":"深褐"},{"name":"G18","color":"#FFE3D5","title":"浅肤"},{"name":"G19","color":"#DD7D41","title":"棕黄"},{"name":"G20","color":"#A5452F","title":"深砖红"},{"name":"G21","color":"#B38561","title":"灰咖"},
+{"name":"H1","color":"#FFFFFF","title":"纯白"},{"name":"H2","color":"#FBFBFB","title":"极极浅灰"},{"name":"H3","color":"#B4B4B4","title":"中灰"},{"name":"H4","color":"#878787","title":"深灰"},{"name":"H5","color":"#464648","title":"近黑灰"},{"name":"H6","color":"#2C2C2C","title":"深灰黑"},{"name":"H7","color":"#010101","title":"纯黑"},{"name":"H8","color":"#E7D6DC","title":"浅粉灰"},{"name":"H9","color":"#EFEDEE","title":"极浅灰"},{"name":"H10","color":"#EBEBEB","title":"浅灰"},{"name":"H11","color":"#CDCDCD","title":"中灰"},{"name":"H12","color":"#FDF6EE","title":"浅米灰"},{"name":"H13","color":"#F4EFD1","title":"浅黄白"},{"name":"H14","color":"#CED7D4","title":"浅蓝灰"},{"name":"H15","color":"#9AA6A6","title":"中蓝灰"},{"name":"H16","color":"#1B1213","title":"深黑"},{"name":"H17","color":"#F0EEEF","title":"极浅灰"},{"name":"H18","color":"#FCFFF6","title":"米白"},{"name":"H19","color":"#F2EEE5","title":"浅米白"},{"name":"H20","color":"#96A09F","title":"中绿灰"},{"name":"H21","color":"#F8FBE6","title":"浅黄白"},{"name":"H22","color":"#CACAD2","title":"浅灰紫"},{"name":"H23","color":"#9B9C94","title":"深绿灰"},
+{"name":"M1","color":"#BBC6B6","title":"浅绿灰"},{"name":"M2","color":"#909994","title":"中绿灰"},{"name":"M3","color":"#697E81","title":"深绿灰"},{"name":"M4","color":"#E0D4BC","title":"浅米棕"},{"name":"M5","color":"#D1CCAF","title":"浅黄棕"},{"name":"M6","color":"#B0AA86","title":"中黄棕"},{"name":"M7","color":"#B0A796","title":"灰棕"},{"name":"M8","color":"#AE8082","title":"红棕灰"},{"name":"M9","color":"#A68862","title":"棕灰"},{"name":"M10","color":"#C4B3BB","title":"粉棕灰"},{"name":"M11","color":"#9D7693","title":"紫棕灰"},{"name":"M12","color":"#644B51","title":"深紫棕灰"},{"name":"M13","color":"#C79266","title":"浅棕"},{"name":"M14","color":"#C27563","title":"红棕"},{"name":"M15","color":"#747D7A","title":"深绿灰"}
+];
+
+const mardRgbMap = new Map();
+const mardNameMap = new Map();
+MARD221.forEach(item=>{
+  const rgb = hexToRgb(item.color);
+  const key = rgbToKey(...rgb);
+  mardRgbMap.set(key, item.name);
+  mardNameMap.set(item.name, {rgb,hex:item.color,title:item.title,isTransparent: item.name === "T00"});
+});
+
+function getNearestMard(rgb) {
+  let minDist = 99999;
+  let bestItem = MARD221[0];
+  for (const m of MARD221) {
+    const mrgb = hexToRgb(m.color);
+    const d = colorDist(rgb, mrgb);
+    if (d < minDist) {
+      minDist = d;
+      bestItem = m;
+    }
+  }
+  return { 
+    rgb: hexToRgb(bestItem.color), 
+    name: bestItem.name, 
+    isTransparent: bestItem.name === "T00" 
+  };
+}
+
+let imgSrc = null;
+let pixelW = 8;
+let pixelH = 8;
+let allPixels = [];
+let finalColors = {};
+let tempEditPixels = [];
+let curColor = null;
+let canvasW = 600, canvasH = 600;
+
+let lib = JSON.parse(localStorage.getItem('beanLib') || '[]');
+function saveLib(){localStorage.setItem('beanLib',JSON.stringify(lib));renderLib();}
+function renderLib(){
+  const list = $('#historyList');
+  list.innerHTML = '';
+  lib.forEach((item,i)=>{
+    const el = document.createElement('div');
+    el.className = 'history-item';
+    const cv = document.createElement('canvas');
+    cv.className = 'history-canvas';
+    cv.width = 100;cv.height=100;
+    const ctx=cv.getContext('2d');
+    const s=100/Math.max(item.w,item.h);
+    ctx.fillStyle='#fff';ctx.fillRect(0,0,100,100);
+    item.pixels.forEach(p=>{
+      if(p.isTransparent) return;
+      ctx.fillStyle=`rgb(${p.rgb})`;
+      ctx.fillRect(p.x*s,p.y*s,p.pw*s,p.ph*s);
+    });
+    const name=document.createElement('div');
+    name.className='history-name';
+    name.textContent=item.name;
+    const btns=document.createElement('div');
+    btns.className='history-btns';
+    btns.innerHTML=`<button class="small blue load" data-i="${i}">加载</button><button class="small gray del" data-i="${i}">删除</button>`;
+    el.append(cv,name,btns);
+    list.appendChild(el);
+  });
+  $$('.load').forEach(b=>b.onclick=e=>loadLibItem(e.target.dataset.i));
+  $$('.del').forEach(b=>b.onclick=e=>{lib.splice(e.target.dataset.i,1);saveLib();});
+}
+
+$('#sizeMode').onchange=()=>{
+  const m=$('#sizeMode').value;
+  const wrap = $('#customSizeWrap');
+  wrap.style.display = m === 'custom' ? 'flex' : 'none';
+};
+
+$('#synthMode').onchange = () => {
+  const mode = $('#synthMode').value;
+  $('#smartOptions').style.display = mode === 'smart' ? 'flex' : 'none';
+  $('#edgeControl').style.display = mode === 'smart' ? 'flex' : 'none';
+};
+
+$('#edgeEnhance').oninput = () => {
+  $('#edgeVal').textContent = $('#edgeEnhance').value + '%';
+};
+
+$('#threshold').oninput = () => {
+  const val = +$('#threshold').value;
+  $('#thresholdVal').textContent = val;
+};
+
+$('#uploadImg').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const img = new Image();
+  img.onload = function() {
+    imgSrc = img;
+    const cv = $('#originCanvas');
+    cv.width = canvasW;
+    cv.height = canvasH;
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    const scale = Math.min(canvasW / img.width, canvasH / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    const x = (canvasW - w) / 2;
+    const y = (canvasH - h) / 2;
+    ctx.drawImage(img, x, y, w, h);
+  };
+  img.src = URL.createObjectURL(f);
+};
+
+function mergeColors(raw,th,max){
+  const list=Object.entries(raw).sort((a,b)=>b[1]-a[1]);
+  const groups=[];
+  for(const [k,cnt] of list){
+    const rgb=keyToRgb(k);
+    let ok=false;
+    for(const g of groups){
+      if(colorDist(rgb,g.main)<th){g.keys.push(k);g.total+=cnt;ok=true;break;}
+    }
+    if(!ok)groups.push({main:rgb,keys:[k],total:cnt});
+  }
+  const map=new Map();
+  for(const g of groups)for(const k of g.keys)map.set(k,g.main);
+  if(max&&groups.length>max){
+    const tops=groups.slice(0,max).map(g=>g.main);
+    const out=new Map();
+    for(const [k,rgb] of map){
+      let best=tops[0],d=9999;
+      for(const m of tops){
+        const nd=colorDist(rgb,m);
+        if(nd<d){d=nd;best=m;}
+      }
+      out.set(k,best);
+    }
+    return out;
+  }
+  return map;
+}
+
+function mergeColorsSmart(raw, th, max, colorSpace) {
+  const list = Object.entries(raw).sort((a,b)=>b[1]-a[1]);
+  const spaceGroups = [];
+  for(const [k, cnt] of list){
+    const rgb = keyToRgb(k);
+    let spaceVal;
+    if(colorSpace === 'lab') spaceVal = rgbToLab(...rgb);
+    else if(colorSpace === 'hsv') spaceVal = rgbToHsv(...rgb);
+    else spaceVal = [...rgb];
+
+    let ok = false;
+    for(const g of spaceGroups){
+      if(colorSpaceDistance(spaceVal, g.mainSpace, colorSpace) < th){
+        g.keys.push(k);
+        g.total += cnt;
+        ok = true;
+        break;
+      }
+    }
+    if(!ok) spaceGroups.push({main: rgb, mainSpace: spaceVal, keys: [k], total: cnt});
+  }
+
+  const map = new Map();
+  for(const g of spaceGroups) for(const k of g.keys) map.set(k, g.main);
+
+  if(max && spaceGroups.length > max){
+    const allColors = spaceGroups.map(g => {
+      let spaceVal;
+      if(colorSpace === 'lab') spaceVal = rgbToLab(...g.main);
+      else if(colorSpace === 'hsv') spaceVal = rgbToHsv(...g.main);
+      else spaceVal = [...g.main];
+      return spaceVal;
+    });
+
+    const palette = kMeans(allColors, max, colorSpace);
+
+    const out = new Map();
+    for(const [k, rgb] of map){
+      let best = palette[0], d = Infinity;
+      for(const m of palette){
+        const nd = colorDist(rgb, m);
+        if(nd < d){ d = nd; best = m; }
+      }
+      out.set(k, best);
+    }
+    return out;
+  }
+  return map;
+}
+
+function showProgress() {
+  $('#progressOverlay').classList.add('active');
+  updateProgress(0, '准备中...');
+}
+
+function hideProgress() {
+  setTimeout(() => {
+    $('#progressOverlay').classList.remove('active');
+  }, 500);
+}
+
+function updateProgress(percent, detail) {
+  $('#progressBarFill').style.width = percent + '%';
+  $('#progressText').textContent = Math.round(percent) + '%';
+  if (detail) $('#progressDetail').textContent = detail;
+}
+
+// ==================== 【你要的新功能】网格主色 + MARD匹配 ====================
+async function generateGridMajorityMode() {
+  const ocv = $('#originCanvas');
+  const octx = ocv.getContext('2d');
+  const cols = Math.ceil(canvasW / pixelW);
+  const rows = Math.ceil(canvasH / pixelH);
+  allPixels = [];
+  finalColors = {};
+
+  updateProgress(20, "网格划分中...");
+  await new Promise(r => setTimeout(r, 100));
+
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      const px = x * pixelW;
+      const py = y * pixelH;
+
+      // 读取当前网格所有像素
+      const cellData = octx.getImageData(px, py, pixelW, pixelH);
+      const d = cellData.data;
+      const count = {};
+
+      // 统计颜色出现次数
+      for (let i = 0; i < d.length; i += 4) {
+        const r = d[i], g = d[i+1], b = d[i+2];
+        const key = rgbToKey(r, g, b);
+        count[key] = (count[key] || 0) + 1;
+      }
+
+      // 取出现次数最高的颜色
+      let maxKey = null;
+      let maxCnt = 0;
+      for (const [k, c] of Object.entries(count)) {
+        if (c > maxCnt) {
+          maxCnt = c;
+          maxKey = k;
+        }
+      }
+
+      // 转成RGB → 匹配最近MARD
+      const originRgb = keyToRgb(maxKey);
+      const mard = getNearestMard(originRgb);
+
+      allPixels.push({
+        x: px, y: py,
+        pw: pixelW, ph: pixelH,
+        rgb: mard.rgb,
+        isTransparent: mard.isTransparent
+      });
+
+      // 进度
+      const pct = 20 + ((y * cols + x) / (rows * cols)) * 70;
+      updateProgress(pct, `处理网格 ${x+1},${y+1}`);
+      await new Promise(r => setTimeout(r, 0));
+    }
+  }
+
+  // 统计最终颜色
+  finalColors = {};
+  allPixels.forEach(p => {
+    if (p.isTransparent) return;
+    const k = rgbToKey(...p.rgb);
+    finalColors[k] = (finalColors[k] || 0) + 1;
+  });
+
+  updateProgress(100, "完成");
+}
+
+// ==================== 主生成按钮 ====================
+$('#genBtn').onclick = async () => {
+  if(!imgSrc){alert('请先上传图片');return}
+  const synthMode = $('#synthMode').value;
+  showProgress();
+  await new Promise(r => setTimeout(r, 100));
+
+  // 统一画布尺寸
+  if($('#sizeMode').value === 'auto'){
+    canvasW = imgSrc.width * pixelW;
+    canvasH = imgSrc.height * pixelH;
+  } else if($('#sizeMode').value === 'custom'){
+    canvasW = +$('#cw').value * pixelW;
+    canvasH = +$('#ch').value * pixelH;
+  } else {
+    const v = +$('#sizeMode').value;
+    canvasW = v; canvasH = v;
+  }
+
+  // 重绘原图
+  const ocv = $('#originCanvas');
+  ocv.width = canvasW; ocv.height = canvasH;
+  const octx = ocv.getContext('2d');
+  octx.fillStyle = '#fff';
+  octx.fillRect(0,0,canvasW,canvasH);
+  const s = Math.min(canvasW/imgSrc.width, canvasH/imgSrc.height);
+  const ix = imgSrc.width*s, iy=imgSrc.height*s;
+  octx.drawImage(imgSrc, (canvasW-ix)/2, (canvasH-iy)/2, ix, iy);
+
+  // 执行方案
+  if (synthMode === 'gridMajority') {
+    await generateGridMajorityMode();
+  } else {
+    // 原有逻辑
+    const maxC = +$('#maxColors').value;
+    const t = +$('#threshold').value;
+    const colorSpace = $('#colorSpace').value;
+    const ditherType = $('#ditherType').value;
+    const edgeStrength = +$('#edgeEnhance').value/100;
+
+    const imgData = octx.getImageData(0,0,canvasW,canvasH);
+    const data = imgData.data;
+
+    if (synthMode === 'smart') {
+      updateProgress(20, "边缘增强");
+      if(edgeStrength>0) enhanceEdges(data,canvasW,canvasH,edgeStrength);
+      if(maxC>0){
+        updateProgress(30, "色彩空间转换");
+        const pixels = [];
+        for(let i=0;i<data.length;i+=4){
+          const r=data[i],g=data[i+1],b=data[i+2];
+          pixels.push( colorSpace==='lab' ? rgbToLab(r,g,b) : colorSpace==='hsv' ? rgbToHsv(r,g,b) : [r,g,b] );
+        }
+        updateProgress(45, "K-Means聚类");
+        const palette = kMeans(pixels, maxC, colorSpace);
+        updateProgress(60, "抖动");
+        data.set(
+          ditherType==='floyd' ? applyFloydSteinberg(data,canvasW,canvasH,palette,colorSpace,0.5)
+          : ditherType==='bayer' ? applyBayerDither(data,canvasW,canvasH,palette,colorSpace)
+          : (()=>{const out=new Uint8ClampedArray(data.length);
+            for(let i=0;i<data.length;i+=4){
+              const c=findClosestPaletteColor(data[i],data[i+1],data[i+2],palette,colorSpace);
+              out[i]=c[0];out[i+1]=c[1];out[i+2]=c[2];out[i+3]=255;
+            } return out; })()
+        );
+      }
+      octx.putImageData(new ImageData(data,canvasW,canvasH),0,0);
+    }
+
+    updateProgress(75, "像素映射");
+    const raw = {}; allPixels=[];
+    for(let y=0;y<canvasH;y+=pixelH){
+      for(let x=0;x<canvasW;x+=pixelW){
+        const i=(y*canvasW+x)*4;
+        const r=data[i],g=data[i+1],b=data[i+2];
+        const mard=getNearestMard([r,g,b]);
+        const k=rgbToKey(...mard.rgb);
+        if(!mard.isTransparent) raw[k]=(raw[k]||0)+1;
+        allPixels.push({x,y,pw:pixelW,ph:pixelH,rgb:mard.rgb,isTransparent:mard.isTransparent});
+      }
+    }
+
+    updateProgress(90, "颜色合并");
+    const map = synthMode==='smart' ? mergeColorsSmart(raw,t,maxC,colorSpace) : mergeColors(raw,t,maxC);
+    finalColors={};
+    allPixels.forEach(p=>{
+      const f=map.get(rgbToKey(...p.rgb))||p.rgb;
+      p.rgb=f;
+      const mardName=mardRgbMap.get(rgbToKey(...f));
+      p.isTransparent=mardName==="T00";
+      if(!p.isTransparent) finalColors[rgbToKey(...f)]=(finalColors[rgbToKey(...f)]||0)+1;
+    });
+  }
+
+  redrawMain();
+  refreshColorList();
+  buildBeanColorCard();
+  buildBeanPattern();
+  hideProgress();
+};
+
+function redrawMain(){
+  const cv=$('#pixelCanvas');
+  cv.width=canvasW;cv.height=canvasH;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0,0,canvasW,canvasH);
+  allPixels.forEach(p=>{
+    if(p.isTransparent) return;
+    ctx.fillStyle=`rgb(${p.rgb})`;
+    ctx.fillRect(p.x, p.y, p.pw, p.ph);
+  });
+}
+
+function refreshColorList(){
+  const wrap=$('#colorList');wrap.innerHTML='';
+  const arr=Object.entries(finalColors).sort((a,b)=>b[1]-a[1]);
+  for(const [k,c] of arr){
+    const rgb=keyToRgb(k);
+    const mardName = mardRgbMap.get(k)||'未知';
+    if(mardName === "T00") continue;
+    const d=document.createElement('div');d.className='color-item';
+    const b=document.createElement('div');b.className='color-block';
+    b.style.background = `rgb(${rgb})`;
+    const t=document.createElement('div');t.className='color-count';t.textContent=mardName+' ('+ c +')';
+    d.append(b,t);wrap.appendChild(d);
+  }
+}
+
+$('#exportProjectBtn').onclick = () => {
+  if (allPixels.length === 0) {
+    alert('请先生成像素画再导出！');
+    return;
+  }
+  const projectData = {
+    version: '2.0',
+    canvasW, canvasH, pixelW, pixelH,
+    allPixels, finalColors, lib,
+    algoParams: {
+      synthMode: $('#synthMode').value,
+      colorSpace: $('#colorSpace').value,
+      ditherType: $('#ditherType').value,
+      edgeEnhance: $('#edgeEnhance').value,
+      maxColors: $('#maxColors').value,
+      threshold: $('#threshold').value
+    },
+    createTime: new Date().toLocaleString()
+  };
+  const fileName = prompt('请输入项目文件名', '拼豆项目_' + Date.now());
+  if (!fileName) return;
+  const jsonStr = JSON.stringify(projectData, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${fileName}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert('项目导出成功！');
+};
+
+$('#importProjectBtn').onclick = () => {
+  $('#importFile').click();
+};
+
+$('#importFile').onchange = (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!file.name.endsWith('.json')) {
+    alert('请选择 .json 格式的项目文件！');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.allPixels || !data.canvasW || !data.canvasH) {
+        alert('文件格式错误，不是有效项目！');
+        return;
+      }
+      canvasW = data.canvasW;
+      canvasH = data.canvasH;
+      pixelW = data.pixelW || 8;
+      pixelH = data.ph || 8;
+      allPixels = data.allPixels;
+      finalColors = data.finalColors || {};
+      lib = data.lib || [];
+
+      if (data.algoParams) {
+        $('#synthMode').value = data.algoParams.synthMode || 'traditional';
+        $('#colorSpace').value = data.algoParams.colorSpace || 'lab';
+        $('#ditherType').value = data.algoParams.ditherType || 'floyd';
+        $('#edgeEnhance').value = data.algoParams.edgeEnhance || 20;
+        $('#maxColors').value = data.algoParams.maxColors || 16;
+        $('#threshold').value = data.algoParams.threshold || 30;
+
+        $('#edgeVal').textContent = ($('#edgeEnhance').value) + '%';
+        $('#thresholdVal').textContent = $('#threshold').value;
+
+        $('#smartOptions').style.display = $('#synthMode').value === 'smart' ? 'flex' : 'none';
+        $('#edgeControl').style.display = $('#synthMode').value === 'smart' ? 'flex' : 'none';
+      }
+
+      saveLib();
+      redrawMain();
+      refreshColorList();
+      buildBeanColorCard();
+      buildBeanPattern();
+      alert('项目导入成功！');
+    } catch (err) {
+      alert('导入失败：' + err.message);
+    }
+  };
+  reader.readAsText(file);
+};
+
+$('#savePixelBtn').onclick = () => {
+  const canvas = $('#pixelCanvas');
+  if (!canvas.width || !canvas.height) {
+    alert('请先生成像素画！');
+    return;
+  }
+  const defaultFileName = '像素画_' + Date.now();
+  const fileName = prompt('请输入保存的文件名', defaultFileName);
+  if (!fileName) return;
+  const link = document.createElement('a');
+  link.download = `${fileName}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+};
+
+$('#editBtn').onclick = () => {
+  if (!allPixels.length) { 
+    alert('请先生成像素画'); 
+    return; 
+  }
+  const c = document.getElementById('editCanvas');
+  const pixelRatio = 6;
+  c.width = canvasW * pixelRatio;
+  c.height = canvasH * pixelRatio;
+  const maxW = window.innerWidth * 0.9;
+  const maxH = window.innerHeight * 0.9;
+  let displayW = canvasW;
+  let displayH = canvasH;
+  const scaleRatio = Math.min(maxW / displayW, maxH / displayH);
+  displayW *= scaleRatio;
+  displayH *= scaleRatio;
+  c.style.width = displayW + "px";
+  c.style.height = displayH + "px";
+  c.style.imageRendering = "pixelated";
+  const ctx = c.getContext('2d');
+  ctx.scale(pixelRatio, pixelRatio);
+  tempEditPixels = JSON.parse(JSON.stringify(allPixels));
+
+  let undoHistory = [];
+  function saveUndo() {
+    undoHistory.push(JSON.parse(JSON.stringify(tempEditPixels)));
+    if (undoHistory.length > 20) undoHistory.shift();
+  }
+  function doUndo() {
+    if (undoHistory.length === 0) {
+      alert("没有可撤销的操作！");
+      return;
+    }
+    tempEditPixels = undoHistory.pop();
+    redrawEditCanvas();
+  }
+  let batchSourceRgb = null;
+  let isPainting = false;
+  let isPicking = false;
+  let pickedColor = null;
+
+  function drawCheckerboard(x, y, w, h) {
+    const size = 8;
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = "#eee";
+    for (let i = 0; i < w; i += size) {
+      for (let j = 0; j < h; j += size) {
+        if ((i / size + j / size) % 2 === 1) {
+          ctx.fillRect(x + i, y + j, size, size);
+        }
+      }
+    }
+  }
+
+  function redrawEditCanvas() {
+    ctx.clearRect(0, 0, canvasW, canvasH);
+    tempEditPixels.forEach(p => {
+      if(p.isTransparent) {
+        drawCheckerboard(p.x, p.y, p.pw, p.ph);
+        return;
+      }
+      ctx.fillStyle = `rgb(${p.rgb})`;
+      ctx.fillRect(p.x, p.y, p.pw, p.ph);
+      const key = rgbToKey(...p.rgb);
+      const showCode = mardRgbMap.get(key) || '';
+      const bright = (p.rgb[0] * 299 + p.rgb[1] * 587 + p.rgb[2] * 114) / 1000;
+      ctx.fillStyle = bright > 140 ? '#000' : '#fff';
+      ctx.font = `bold ${Math.min(p.pw,p.ph) * 0.42}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(showCode, p.x + p.pw / 2, p.y + p.ph / 2);
+    });
+  }
+  redrawEditCanvas();
+
+  const panel = document.getElementById('editColorPanel');
+  panel.innerHTML = '';
+  const colorArr = Object.entries(finalColors).sort((a, b) => b[1] - a[1]);
+  colorArr.forEach(([k]) => {
+    const rgb = keyToRgb(k);
+    const mardName = mardRgbMap.get(k) || '';
+    const isTransparent = mardName === "T00";
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexDirection = "column";
+    wrap.style.alignItems = "center";
+    wrap.style.gap = "2px";
+    wrap.style.cursor = "pointer";
+    const div = document.createElement('div');
+    div.className = 'color-block';
+    div.style.width = "26px";
+    div.style.height = "26px";
+    div.style.borderRadius = "4px";
+    if(isTransparent){
+      div.style.background = "linear-gradient(45deg, #fff 0%, #fff 50%, #eee 50%, #eee 100%)";
+      div.style.backgroundSize = "8px 8px";
+    } else {
+      div.style.background = `rgb(${rgb})`;
+    }
+    const text = document.createElement("span");
+    text.style.fontSize = "12px";
+    text.textContent = mardName;
+    wrap.onclick = () => {
+      curColor = [...rgb];
+      curColor.isTransparent = isTransparent;
+      document.querySelectorAll('#editColorPanel .color-block').forEach(el => {
+        el.style.outline = '';
+      });
+      div.style.outline = '3px solid #ec4899';
+      div.style.outlineOffset = '1px';
+    };
+    wrap.appendChild(div);
+    wrap.appendChild(text);
+    panel.appendChild(wrap);
+  });
+
+  const batchBox = document.getElementById('commonColorsPanel');
+  batchBox.innerHTML = '';
+  batchBox.style.display = "flex";
+  batchBox.style.gap = "12px";
+  batchBox.style.alignItems = "center";
+  batchBox.style.margin = "10px 0";
+  batchBox.style.flexWrap = "wrap";
+
+  const setSourceBtn = document.createElement('button');
+  setSourceBtn.textContent = '设为批量替换源色';
+  setSourceBtn.style.padding = "6px 10px";
+  setSourceBtn.style.border = "1px solid #ccc";
+  setSourceBtn.style.borderRadius = "6px";
+  setSourceBtn.style.cursor = "pointer";
+  setSourceBtn.onclick = () => {
+    if (!curColor) {
+      alert("请先点击上方色块选择颜色");
+      return;
+    }
+    batchSourceRgb = [...curColor];
+    batchSourceRgb.isTransparent = curColor.isTransparent;
+    alert("已选定批量替换源色：" + (mardRgbMap.get(rgbToKey(...curColor)) || ''));
+  };
+
+  const groups = {
+    "透明": ["T00"],
+    "A 黄色系": MARD221.filter(i => i.name.startsWith("A")).map(i => i.name),
+    "B 绿色系": MARD221.filter(i => i.name.startsWith("B")).map(i => i.name),
+    "C 蓝色系": MARD221.filter(i => i.name.startsWith("C")).map(i => i.name),
+    "D 紫色系": MARD221.filter(i => i.name.startsWith("D")).map(i => i.name),
+    "E 粉色系": MARD221.filter(i => i.name.startsWith("E")).map(i => i.name),
+    "F 红色系": MARD221.filter(i => i.name.startsWith("F")).map(i => i.name),
+    "G 棕色系": MARD221.filter(i => i.name.startsWith("G")).map(i => i.name),
+    "H 黑白色系": MARD221.filter(i => i.name.startsWith("H")).map(i => i.name),
+    "M 莫兰迪色系": MARD221.filter(i => i.name.startsWith("M")).map(i => i.name),
+  };
+
+  let selectColorVal = MARD221[0].color;
+  const root = document.createElement('div');
+  root.style.display = "flex";
+  root.style.gap = "8px";
+  root.style.alignItems = "center";
+
+  const groupSelect = document.createElement('select');
+  groupSelect.style.padding = "6px 8px";
+  groupSelect.style.borderRadius = "6px";
+  groupSelect.style.border = "1px solid #ccc";
+  Object.keys(groups).forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g;
+    opt.textContent = g;
+    groupSelect.appendChild(opt);
+  });
+
+  const dropdownWrap = document.createElement('div');
+  dropdownWrap.style.position = "relative";
+  dropdownWrap.style.minWidth = "220px";
+
+  const dropdownInput = document.createElement('div');
+  dropdownInput.style.display = "flex";
+  dropdownInput.style.alignItems = "center";
+  dropdownInput.style.gap = "6px";
+  dropdownInput.style.padding = "6px 8px";
+  dropdownInput.style.border = "1px solid #ccc";
+  dropdownInput.style.borderRadius = "6px";
+  dropdownInput.style.background = "#fff";
+  dropdownInput.style.cursor = "pointer";
+
+  const curColorBlock = document.createElement('div');
+  curColorBlock.style.width = "18px";
+  curColorBlock.style.height = "18px";
+  curColorBlock.style.borderRadius = "3px";
+  curColorBlock.style.border = "1px solid #ccc";
+  curColorBlock.style.background = MARD221[0].color;
+
+  const curText = document.createElement('span');
+  curText.style.fontSize = "13px";
+  curText.textContent = `${MARD221[0].name}｜${MARD221[0].title}`;
+
+  const dropdownList = document.createElement('div');
+  dropdownList.style.position = "absolute";
+  dropdownList.style.top = "105%";
+  dropdownList.style.left = "0";
+  dropdownList.style.width = "100%";
+  dropdownList.style.maxHeight = "240px";
+  dropdownList.style.overflowY = "auto";
+  dropdownList.style.background = "#fff";
+  dropdownList.style.border = "1px solid #ccc";
+  dropdownList.style.borderRadius = "6px";
+  dropdownList.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
+  dropdownList.style.zIndex = "999";
+  dropdownList.style.display = "none";
+
+  function updateColorList(groupKey) {
+    dropdownList.innerHTML = '';
+    const names = groups[groupKey];
+    names.forEach(name => {
+      const item = MARD221.find(i => i.name === name);
+      if (!item) return;
+      const itemRow = document.createElement('div');
+      itemRow.style.display = "flex";
+      itemRow.style.alignItems = "center";
+      itemRow.style.gap = "6px";
+      itemRow.style.padding = "5px 8px";
+      itemRow.style.cursor = "pointer";
+      itemRow.style.transition = "background 0.2s";
+      const block = document.createElement('div');
+      block.style.width = "18px";
+      block.style.height = "18px";
+      block.style.borderRadius = "3px";
+      block.style.border = "1px solid #ccc";
+      block.style.background = item.color;
+      const text = document.createElement('span');
+      text.style.fontSize = "13px";
+      text.textContent = `${item.name}｜${item.title}`;
+      itemRow.appendChild(block);
+      itemRow.appendChild(text);
+      itemRow.onmouseover = () => itemRow.style.background = "#f5f5f5";
+      itemRow.onmouseout = () => itemRow.style.background = "#fff";
+      itemRow.onclick = () => {
+        selectColorVal = item.color;
+        curColorBlock.style.background = item.color;
+        curText.textContent = `${item.name}｜${item.title}`;
+        dropdownList.style.display = "none";
+        curColor = hexToRgb(item.color);
+        curColor.isTransparent = item.name === "T00";
+        document.querySelectorAll('#editColorPanel .color-block').forEach(el => {
+          el.style.outline = '';
+        });
+      };
+      dropdownList.appendChild(itemRow);
+    });
+  }
+
+  updateColorList(groupSelect.value);
+  groupSelect.onchange = () => { updateColorList(groupSelect.value); };
+
+  dropdownInput.onclick = (e) => {
+    e.stopPropagation();
+    dropdownList.style.display = dropdownList.style.display === "block" ? "none" : "block";
+  };
+
+  document.addEventListener('click', () => { dropdownList.style.display = "none"; });
+  dropdownInput.appendChild(curColorBlock);
+  dropdownInput.appendChild(curText);
+  dropdownWrap.appendChild(dropdownInput);
+  dropdownWrap.appendChild(dropdownList);
+
+  root.appendChild(groupSelect);
+  root.appendChild(dropdownWrap);
+  const targetSelect = { get value() { return selectColorVal; } };
+
+  const replaceBtn = document.createElement('button');
+  replaceBtn.textContent = '一键批量替换';
+  replaceBtn.style.padding = "6px 12px";
+  replaceBtn.style.border = "none";
+  replaceBtn.style.borderRadius = "6px";
+  replaceBtn.style.background = "#06d6a0";
+  replaceBtn.style.color = "#fff";
+  replaceBtn.style.cursor = "pointer";
+  replaceBtn.onclick = () => {
+    if (!batchSourceRgb) {
+      alert("请先点击【设为批量替换源色】");
+      return;
+    }
+    saveUndo();
+    const targetRgb = hexToRgb(targetSelect.value);
+    const targetMard = MARD221.find(m => m.color === targetSelect.value);
+    const targetIsTransparent = targetMard?.name === "T00";
+    const sourceKey = rgbToKey(...batchSourceRgb);
+    tempEditPixels.forEach(p => {
+      if (rgbToKey(...p.rgb) === sourceKey) {
+        p.rgb = [...targetRgb];
+        p.isTransparent = targetIsTransparent;
+      }
+    });
+    redrawEditCanvas();
+    alert("批量替换完成");
+  };
+
+  batchBox.appendChild(setSourceBtn);
+  batchBox.appendChild(root);
+  batchBox.appendChild(replaceBtn);
+
+  function paintAt(clientX, clientY) {
+    if (!curColor) return;
+    const rect = c.getBoundingClientRect();
+    const x = (clientX - rect.left) / scaleRatio;
+    const y = (clientY - rect.top) / scaleRatio;
+    let changed = false;
+    tempEditPixels.forEach(p => {
+      if (x >= p.x && x <= p.x + p.pw && y >= p.y && y <= p.y + p.ph) {
+        p.rgb = [...curColor];
+        p.isTransparent = curColor.isTransparent;
+        changed = true;
+      }
+    });
+    if(changed) redrawEditCanvas();
+  }
+
+  function pickColorAt(clientX, clientY) {
+    const rect = c.getBoundingClientRect();
+    const x = (clientX - rect.left) / scaleRatio;
+    const y = (clientY - rect.top) / scaleRatio;
+    tempEditPixels.forEach(p => {
+      if (x >= p.x && x <= p.x + p.pw && y >= p.y && y <= p.y + p.ph) {
+        pickedColor = { rgb: [...p.rgb], isTransparent: p.isTransparent };
+        alert(`拾取成功！色号：${mardRgbMap.get(rgbToKey(...p.rgb)) || '未知'}\n请点击【确定拾取】使用该颜色`);
+        isPicking = false;
+        c.style.cursor = "pointer";
+      }
+    });
+  }
+
+  c.onmousedown = (e) => {
+    if(isPicking){ pickColorAt(e.clientX, e.clientY); return; }
+    if (!curColor) return;
+    saveUndo();
+    isPainting = true;
+    paintAt(e.clientX, e.clientY);
+  };
+  window.onmouseup = () => { isPainting = false; };
+  c.onmousemove = (e) => { if (isPainting) paintAt(e.clientX, e.clientY); };
+  c.onmouseleave = () => { isPainting = false; };
+
+  $('#pickColorBtn').onclick = () => {
+    isPicking = true;
+    c.style.cursor = "crosshair";
+    alert("已进入拾取模式，请点击画布上任意像素拾取颜色！");
+  };
+
+  $('#confirmPickBtn').onclick = () => {
+    if(!pickedColor){ alert("请先拾取颜色！"); return; }
+    curColor = pickedColor.rgb;
+    curColor.isTransparent = pickedColor.isTransparent;
+    document.querySelectorAll('#editColorPanel .color-block').forEach(el => { el.style.outline = ''; });
+    alert("颜色拾取已生效，可开始涂色！");
+  };
+
+  $('#undoBtn').onclick = doUndo;
+  document.getElementById('editPopup').style.display = 'flex';
+  document.getElementById('editMask').style.display = 'block';
+};
+
+$('#editClose').onclick = ()=>{ $('#editPopup').style.display = 'none'; $('#editMask').style.display = 'none'; };
+$('#editCancel').onclick = ()=>{ $('#editPopup').style.display = 'none'; $('#editMask').style.display = 'none'; };
+$('#editConfirm').onclick = ()=>{
+  allPixels = JSON.parse(JSON.stringify(tempEditPixels));
+  finalColors = {};
+  allPixels.forEach(p=>{
+    const k = rgbToKey(...p.rgb);
+    if(p.isTransparent) return;
+    finalColors[k] = (finalColors[k]||0)+1;
+  });
+  redrawMain();
+  refreshColorList();
+  buildBeanColorCard();
+  buildBeanPattern();
+  $('#editPopup').style.display = 'none';
+  $('#editMask').style.display = 'none';
+};
+
+function buildBeanColorCard(){
+  const wrap = $('#beanColorCardList');
+  wrap.innerHTML = '';
+  const arr = Object.entries(finalColors).sort((a,b)=>b[1]-a[1]);
+  arr.forEach(([key,count])=>{
+    const rgb = keyToRgb(key);
+    const code = mardRgbMap.get(key)||'未知';
+    if(code === "T00") return;
+    const d = document.createElement('div');
+    d.className = 'color-item';
+    const b = document.createElement('div');
+    b.className = 'color-block';
+    b.style.background = `rgb(${rgb})`;
+    const t = document.createElement('div');
+    t.className = 'color-count';
+    t.textContent = `${code} (${count})`;
+    d.append(b,t);
+    wrap.appendChild(d);
+  });
+}
+
+function buildBeanPattern() {
+  const container = document.getElementById('beanPatternContainer');
+  const colorInfo = document.getElementById('beanPatternColorInfo');
+  container.innerHTML = '';
+  colorInfo.innerHTML = '';
+
+  const uniqueColors = Object.keys(finalColors);
+  const colorMap = new Map();
+  uniqueColors.forEach(k => {
+    colorMap.set(k, mardRgbMap.get(k) || '');
+  });
+
+  let solidTotal = 0;
+  uniqueColors.forEach(key => {
+    const code = colorMap.get(key);
+    if(code !== "T00"){
+      solidTotal += finalColors[key] || 0;
+    }
+  });
+
+  const rows = Math.ceil(canvasH / pixelH);
+  const cols = Math.ceil(canvasW / pixelW);
+  const cellSize = 22;
+
+  const pixelMap = new Map();
+  allPixels.forEach(p => {
+    const key = `${p.x},${p.y}`;
+    pixelMap.set(key, p);
+  });
+
+  function createSinglePattern(isMirror) {
+    const wrap = document.createElement('div');
+    wrap.style.width = '100%';
+    wrap.style.marginBottom = '40px';
+
+    const title = document.createElement('div');
+    title.style.padding = '6px 0 10px 2px';
+    title.style.fontSize = '14px';
+    title.style.fontWeight = 'bold';
+    title.textContent = `MARD(${solidTotal})`;
+    wrap.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'pattern-grid';
+    grid.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        const mx = isMirror ? (cols - 1 - x) : x;
+        const px = mx * pixelW;
+        const py = y * pixelH;
+        const p = pixelMap.get(`${px},${py}`);
+        if (!p) continue;
+
+        const key = rgbToKey(...p.rgb);
+        const code = colorMap.get(key) || "";
+        const cell = document.createElement('div');
+        cell.className = 'pattern-cell';
+        const isTransparent = p.isTransparent;
+
+        if ((x + 1) % 10 === 0) cell.classList.add('right-bold');
+        if ((y + 1) % 10 === 0) cell.classList.add('bottom-bold');
+
+        if (isTransparent) {
+          cell.style.background = "linear-gradient(45deg,#fff 0%,#fff 50%,#eee 50%,#eee 100%)";
+          cell.style.backgroundSize = "8px 8px";
+          cell.textContent = "";
+        } else {
+          cell.style.background = rgbToHex(...p.rgb);
+          cell.textContent = code;
+          const bright = (p.rgb[0] * 299 + p.rgb[1] * 587 + p.rgb[2] * 114) / 1000;
+          cell.style.color = bright > 140 ? '#000' : '#fff';
+        }
+        grid.appendChild(cell);
+      }
+    }
+
+    const topNums = document.createElement('div');
+    topNums.style.display = 'grid';
+    topNums.style.gridTemplateColumns = `repeat(${cols}, ${cellSize}px)`;
+    for (let x = 1; x <= cols; x++) {
+      const n = document.createElement('div');
+      n.style.width = cellSize + 'px';
+      n.style.height = '20px';
+      n.style.display = 'flex';
+      n.style.alignItems = 'center';
+      n.style.justifyContent = 'center';
+      n.style.fontSize = '10px';
+      n.textContent = x;
+      topNums.appendChild(n);
+    }
+
+    const bottomNums = topNums.cloneNode(true);
+    const leftNums = document.createElement('div');
+    leftNums.style.display = 'flex';
+    leftNums.style.flexDirection = 'column';
+    for (let y = 1; y <= rows; y++) {
+      const n = document.createElement('div');
+      n.style.width = '20px';
+      n.style.height = cellSize + 'px';
+      n.style.display = 'flex';
+      n.style.alignItems = 'center';
+      n.style.justifyContent = 'center';
+      n.style.fontSize = '10px';
+      n.textContent = y;
+      leftNums.appendChild(n);
+    }
+
+    const rightNums = leftNums.cloneNode(true);
+    const middle = document.createElement('div');
+    middle.style.display = 'flex';
+    middle.style.flexDirection = 'column';
+    middle.appendChild(topNums);
+    middle.appendChild(grid);
+    middle.appendChild(bottomNums);
+
+    const outer = document.createElement('div');
+    outer.style.display = 'flex';
+    outer.style.alignItems = 'center';
+    outer.style.gap = '2px';
+    outer.appendChild(leftNums);
+    outer.appendChild(middle);
+    outer.appendChild(rightNums);
+
+    wrap.appendChild(outer);
+
+    const colorWrap = document.createElement('div');
+    colorWrap.className = 'pattern-color-bar';
+
+    const colorCellSize = 80;
+    const colorCellHeight = 36;
+    const colorCellGap = 10;
+    const gridWidth = cols * 22 + 44;
+    const maxPerRow = Math.max(1, Math.floor((gridWidth + colorCellGap) / (colorCellSize + colorCellGap)));
+
+    let currentRow = document.createElement('div');
+    currentRow.style.display = 'flex';
+    currentRow.style.gap = colorCellGap + 'px';
+    currentRow.style.flexWrap = 'nowrap';
+    currentRow.style.marginBottom = colorCellGap + 'px';
+    currentRow.style.width = '100%';
+
+    let cellCount = 0;
+
+    uniqueColors.forEach(key => {
+      const rgb = keyToRgb(key);
+      const code = mardRgbMap.get(key) || '?';
+      const cnt = finalColors[key];
+      const isTransparent = code === "T00";
+      if (isTransparent) return;
+
+      const item = document.createElement('div');
+      item.className = 'pattern-color-cell';
+      item.style.background = `rgb(${rgb})`;
+
+      const bright = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+      item.style.color = bright > 140 ? '#000' : '#fff';
+
+      item.innerHTML = `<div class="cell-code">${code}</div><div class="cell-count">(${cnt})</div>`;
+
+      currentRow.appendChild(item);
+      cellCount++;
+
+      if (cellCount >= maxPerRow) {
+        colorWrap.appendChild(currentRow);
+        currentRow = document.createElement('div');
+        currentRow.style.display = 'flex';
+        currentRow.style.gap = colorCellGap + 'px';
+        currentRow.style.flexWrap = 'nowrap';
+        currentRow.style.marginBottom = colorCellGap + 'px';
+        currentRow.style.width = '100%';
+        cellCount = 0;
+      }
+    });
+
+    if (currentRow.children.length > 0) {
+      colorWrap.appendChild(currentRow);
+    }
+
+    wrap.appendChild(colorWrap);
+    return wrap;
+  }
+
+  container.appendChild(createSinglePattern(false));
+  container.appendChild(createSinglePattern(true));
+}
+
+$('#saveToLib').onclick=()=>{
+  if(!allPixels.length){alert('先生成像素画');return}
+  const name = prompt('素材名称','像素画');
+  if(!name)return;
+  lib.unshift({
+    name,w:canvasW,h:canvasH,pixels:allPixels,colors:finalColors,pw:pixelW,ph:pixelH
+  });
+  saveLib();
+};
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', function () {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    const targetId = this.getAttribute('data-target');
+    document.getElementById(targetId).classList.add('active');
+  });
+});
+
+$('#saveOriginalBtn').onclick = function () {
+  try {
+    const container = $('#beanPatternContainer');
+    const original = container.children[0];
+    const exportNode = original.cloneNode(true);
+    const tempWrap = document.createElement('div');
+    tempWrap.style.position = 'absolute';
+    tempWrap.style.left = '-9999px';
+    tempWrap.style.top = '0';
+    tempWrap.style.background = '#fff';
+    tempWrap.style.padding = '20px';
+    tempWrap.appendChild(exportNode);
+    document.body.appendChild(tempWrap);
+    html2canvas(tempWrap, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '原版图纸.png';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+      document.body.removeChild(tempWrap);
+    }).catch(err => {
+      document.body.removeChild(tempWrap);
+      alert('保存失败：' + err.message);
+    });
+  } catch (e) {
+    alert('保存失败：' + e.message);
+  }
+};
+
+$('#saveMirrorBtn').onclick = function () {
+  try {
+    const container = $('#beanPatternContainer');
+    const mirror = container.children[1];
+    const exportNode = mirror.cloneNode(true);
+    const tempWrap = document.createElement('div');
+    tempWrap.style.position = 'absolute';
+    tempWrap.style.left = '-9999px';
+    tempWrap.style.top = '0';
+    tempWrap.style.background = '#fff';
+    tempWrap.style.padding = '20px';
+    tempWrap.appendChild(exportNode);
+    document.body.appendChild(tempWrap);
+    html2canvas(tempWrap, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '镜像图纸.png';
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+      document.body.removeChild(tempWrap);
+    }).catch(err => {
+      document.body.removeChild(tempWrap);
+      alert('保存失败：' + err.message);
+    });
+  } catch (e) {
+    alert('保存失败：' + e.message);
+  }
+};
+
+renderLib();
+</script>
+</body>
+</html>
