@@ -979,6 +979,7 @@ border-top: 1px solid var(--border);
       <div class="control" style="margin-top:20px; display:flex; gap:12px;">
         <button id="saveOriginalBtn" class="blue">💾 保存【原版图纸】</button>
         <button id="saveMirrorBtn" class="blue">💾 保存【镜像图纸】</button>
+        <button id="saveAllColorLayersBtn" class="blue">💾 保存【所有单色分层图纸】</button>
       </div>
     </div>
   </div>
@@ -2514,8 +2515,138 @@ $('#saveMirrorBtn').onclick = function () {
     alert('保存失败：' + e.message);
   }
 };
-
 renderLib();
+
+// ==================== 单色分层导出（每种颜色一张图） ====================
+function exportColorLayer(isMirror, targetRgbKey, targetColorName, index, total) {
+  return new Promise((resolve, reject) => {
+    try {
+      // 1. 克隆完整图纸结构
+      const container = $('#beanPatternContainer');
+      const sourcePattern = container.children[isMirror ? 1 : 0];
+      const patternClone = sourcePattern.cloneNode(true);
+
+      // 2. 只高亮目标颜色，其他颜色变暗
+      const cells = patternClone.querySelectorAll('.pattern-cell');
+      cells.forEach(cell => {
+        const bg = cell.style.backgroundColor;
+        if (!bg) return;
+        
+        const rgbMatch = bg.match(/\d+/g);
+        if (!rgbMatch || rgbMatch.length < 3) return;
+        
+        const r = Number(rgbMatch[0]);
+        const g = Number(rgbMatch[1]);
+        const b = Number(rgbMatch[2]);
+        const currentKey = rgbToKey(r, g, b);
+
+        if (currentKey === targetRgbKey) {
+          // 目标色保持原样
+        } else {
+          // 其他颜色变暗
+          cell.style.backgroundColor = `rgb(${Math.round(r*0.5)},${Math.round(g*0.5)},${Math.round(b*0.5)})`;
+          cell.style.color = '#fff';
+        }
+      });
+
+      // 3. 创建独立临时容器（关键：每次都新建，不共用）
+      const uniqueTempId = `temp-export-${Date.now()}-${Math.random()}`;
+      const tempWrap = document.createElement('div');
+      tempWrap.id = uniqueTempId;
+      tempWrap.style.cssText = `
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        background: #ffffff;
+        padding: 20px;
+        z-index: -1;
+      `;
+      tempWrap.appendChild(patternClone);
+      document.body.appendChild(tempWrap);
+
+      // 4. 渲染并下载
+      html2canvas(tempWrap, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      }).then(canvas => {
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          const type = isMirror ? '镜像' : '原版';
+          a.download = `【${index}/${total}】${targetColorName}_${type}.png`;
+          
+          // 触发下载
+          document.body.appendChild(a);
+          a.click();
+          
+          // 清理
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            document.body.removeChild(tempWrap);
+            resolve();
+          }, 100);
+        }, 'image/png');
+      }).catch(err => {
+        document.body.removeChild(tempWrap);
+        reject(err);
+      });
+
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+// 一键导出所有单色分层
+$('#saveAllColorLayersBtn').onclick = async function () {
+  if (!allPixels.length) {
+    alert('请先生成像素画！');
+    return;
+  }
+
+  // 收集所有有效颜色
+  const colorList = [];
+  Object.entries(finalColors).forEach(([key, count]) => {
+    const code = mardRgbMap.get(key) || '未知';
+    if (code !== 'T00') {
+      colorList.push({ key, code, count });
+    }
+  });
+
+  if (colorList.length === 0) {
+    alert('没有可导出的颜色');
+    return;
+  }
+
+  const total = colorList.length;
+  if (!confirm(`将导出 ${total} 种颜色 × 2（原版+镜像）= ${total*2} 张图纸\n确定开始导出？`)) return;
+
+  try {
+    // 严格串行导出，保证每张都能完整保存
+    for (let i = 0; i < colorList.length; i++) {
+      const { key, code } = colorList[i];
+      const seq = i + 1;
+      
+      // 原版
+      await exportColorLayer(false, key, code, seq, total);
+      // 镜像
+      await exportColorLayer(true, key, code, seq, total);
+      
+      // 给浏览器一点喘息时间
+      await new Promise(r => setTimeout(r, 150));
+    }
+    
+    alert('✅ 所有单色分层图纸导出完成！');
+  } catch (e) {
+    alert('❌ 导出失败：' + e.message);
+    console.error('导出错误', e);
+  }
+};
+
 </script>
 </body>
 </html>
